@@ -1,0 +1,9 @@
+# Hugging Face Space dependencies. Gradio itself is installed from `sdk_version` in README.md.
+# The Space also needs these repo files next to app.py (merge_and_publish.py --space copies them):
+#   config.py config.yaml prompts.py modeling.py utils.py metrics.py
+torch==2.15.0
+transformers==5.23.0
+peft==0.22.0
+accelerate==1.16.0
+huggingface_hub==2.4.0
+pyyaml==6.0.3
