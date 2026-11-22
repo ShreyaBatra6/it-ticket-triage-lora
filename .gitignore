@@ -1,0 +1,28 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.ipynb_checkpoints/
+
+# Generated data and model weights (large, reproducible, or pushed to the Hub instead)
+data/
+outputs/
+runs/
+wandb/
+*.safetensors
+*.bin
+*.pt
+
+# Smoke-test results are throwaway; real results/*.json and *.png are committed
+results/smoke/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
