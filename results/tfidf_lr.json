@@ -1,0 +1,242 @@
+{
+  "run_name": "tfidf_lr",
+  "timestamp": "2026-11-21T21:27:23+00:00",
+  "smoke": false,
+  "display_name": "TF-IDF + LogReg",
+  "split": "test",
+  "model": {
+    "type": "tfidf(word 1-2 + char_wb 3-5) + logistic regression",
+    "C": {
+      "category": 10.0,
+      "priority": 1.0
+    },
+    "val_macro_f1_by_C": {
+      "category": {
+        "0.3": 0.9166003323738937,
+        "1.0": 0.9277227294778829,
+        "3.0": 0.9316918202579474,
+        "10.0": 0.9389391151668576,
+        "30.0": 0.9368849518180428
+      },
+      "priority": {
+        "0.3": 0.7061046820059372,
+        "1.0": 0.7156267663706262,
+        "3.0": 0.7068294225902921,
+        "10.0": 0.6873947449292709,
+        "30.0": 0.6876885614750986
+      }
+    }
+  },
+  "metrics": {
+    "n": 404,
+    "category_accuracy": 0.9455445544554455,
+    "category_macro_f1": 0.9421313408790528,
+    "priority_accuracy": 0.7277227722772277,
+    "priority_macro_f1": 0.7229257795077072,
+    "exact_match": 0.6782178217821783,
+    "valid_json_rate": 1.0,
+    "valid_label_rate": 1.0,
+    "per_class_f1": {
+      "category": {
+        "Hardware": 0.9272727272727272,
+        "Software": 0.9103448275862069,
+        "Network": 0.9074074074074074,
+        "Access/Accounts": 0.9946524064171123,
+        "Email": 0.9512195121951219,
+        "Security": 1.0,
+        "Printer": 1.0,
+        "Other": 0.8461538461538461
+      },
+      "priority": {
+        "Low": 0.6344086021505376,
+        "Medium": 0.7523510971786834,
+        "High": 0.7652173913043478,
+        "Critical": 0.7397260273972602
+      }
+    },
+    "lenient": {
+      "category_accuracy": 0.9455445544554455,
+      "priority_accuracy": 0.7277227722772277,
+      "exact_match": 0.6782178217821783,
+      "valid_json_rate": 1.0
+    },
+    "avg_latency_ms": 0.5347688119319074,
+    "batch_size": 404,
+    "device": "cpu"
+  },
+  "confusion_matrices": {
+    "category": "tfidf_lr_cm_category.png",
+    "priority": "tfidf_lr_cm_priority.png"
+  },
+  "sample_errors": [
+    {
+      "id": "tkt-00856",
+      "subject": "MFA problem",
+      "body": "hey team\n\nthe mfa prompt never arrives on my phone. no rush. just me, my colleagues are fine.\n\ncheers, Olga",
+      "gold": {
+        "category": "Access/Accounts",
+        "priority": "High"
+      },
+      "predicted": {
+        "category": "Access/Accounts",
+        "priority": "Low"
+      },
+      "raw_output": "{\"category\": \"Access/Accounts\", \"priority\": \"Low\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-00221",
+      "subject": "The support@ shared mailbox issue",
+      "body": "The support@ shared mailbox disappeared from my Oulook folder list. Only me so far.",
+      "gold": {
+        "category": "Email",
+        "priority": "Low"
+      },
+      "predicted": {
+        "category": "Email",
+        "priority": "High"
+      },
+      "raw_output": "{\"category\": \"Email\", \"priority\": \"High\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-02285",
+      "subject": "Remote site has no network",
+      "body": "Dear IT Support,\n\nThe London warehouse lost its network connection and the handheld scanners can't sync. Please could it be fixed today?\n\nKind regards,\nFatima",
+      "gold": {
+        "category": "Network",
+        "priority": "High"
+      },
+      "predicted": {
+        "category": "Network",
+        "priority": "Critical"
+      },
+      "raw_output": "{\"category\": \"Network\", \"priority\": \"Critical\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-02146",
+      "subject": "accounts for new starter sophie",
+      "body": "Can you set up accounts for Sophie, a contractor starting Monday? Their line manager is Sophie. Whenever is convenient. I have a workaround for now.\n\nSent from my phone, sorry for typos",
+      "gold": {
+        "category": "Access/Accounts",
+        "priority": "Medium"
+      },
+      "predicted": {
+        "category": "Access/Accounts",
+        "priority": "Low"
+      },
+      "raw_output": "{\"category\": \"Access/Accounts\", \"priority\": \"Low\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-01985",
+      "subject": "DNS error",
+      "body": "Good morning,\n\nI get ERR_NAME_NOT_RESOLVED for the intranet but Google works. I can still work but it's frustrating.\n\nThank you in advance.\nAisha",
+      "gold": {
+        "category": "Network",
+        "priority": "Medium"
+      },
+      "predicted": {
+        "category": "Software",
+        "priority": "Medium"
+      },
+      "raw_output": "{\"category\": \"Software\", \"priority\": \"Medium\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-01035",
+      "subject": "Password problem",
+      "body": "Morning all,\n\nI forgot my password and I'm locked out of my laptop. I'm on a Mac. Please call me ASAP on ext. 2290. We cannot work at all.\n\ncheers, Grace",
+      "gold": {
+        "category": "Access/Accounts",
+        "priority": "High"
+      },
+      "predicted": {
+        "category": "Access/Accounts",
+        "priority": "Critical"
+      },
+      "raw_output": "{\"category\": \"Access/Accounts\", \"priority\": \"Critical\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-00836",
+      "subject": "Network port not working",
+      "body": "The network port at my new desk doesnt work, the light by the cable never comes on. Only me so far.",
+      "gold": {
+        "category": "Network",
+        "priority": "Low"
+      },
+      "predicted": {
+        "category": "Network",
+        "priority": "High"
+      },
+      "raw_output": "{\"category\": \"Network\", \"priority\": \"High\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-00683",
+      "subject": "ASAP: Can't log in",
+      "body": "Good morning,\n\nI forgot my password and I'm locked out of my laptop. I can still work but it's frustrating.\n\nBest regards,\nFatima (Legal)",
+      "gold": {
+        "category": "Access/Accounts",
+        "priority": "High"
+      },
+      "predicted": {
+        "category": "Access/Accounts",
+        "priority": "Medium"
+      },
+      "raw_output": "{\"category\": \"Access/Accounts\", \"priority\": \"Medium\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-03354",
+      "subject": "Fwd: Something using all the CPU",
+      "body": "Something is using 100% CPU and my laptop is basically unusable. Whenever is convenient. Its only affecting me as far as I know. I can still work but its frustrating.\n\nSent from my iPhone",
+      "gold": {
+        "category": "Software",
+        "priority": "Medium"
+      },
+      "predicted": {
+        "category": "Hardware",
+        "priority": "Medium"
+      },
+      "raw_output": "{\"category\": \"Hardware\", \"priority\": \"Medium\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-00269",
+      "subject": "!! Issue with an Excel file",
+      "body": "our month-end excel macro stopped working after the update, it gives a 'compile error'. nobody else has mentioned it.",
+      "gold": {
+        "category": "Software",
+        "priority": "Critical"
+      },
+      "predicted": {
+        "category": "Software",
+        "priority": "High"
+      },
+      "raw_output": "{\"category\": \"Software\", \"priority\": \"High\"}",
+      "parse_error": null
+    }
+  ],
+  "environment": {
+    "python": "3.11.17",
+    "platform": "Windows-10-10.0.26300-SP0",
+    "processor": "Intel64 Family 6 Model 140 Stepping 1, GenuineIntel",
+    "cpu_count": 8,
+    "libraries": {
+      "torch": "2.15.0+cpu",
+      "transformers": "5.23.0",
+      "peft": "0.22.0",
+      "trl": "1.18.2",
+      "accelerate": "1.16.0",
+      "datasets": "5.2.0",
+      "bitsandbytes": null,
+      "huggingface_hub": "2.4.0",
+      "scikit-learn": "1.9.1",
+      "numpy": "2.4.6"
+    },
+    "gpu": null
+  }
+}
