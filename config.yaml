@@ -1,0 +1,143 @@
+# Single source of truth for the whole pipeline.
+# Every script reads this file via config.py; `--smoke` deep-merges the `smoke:` block on top.
+
+seed: 42
+hf_username: shreyabatra6
+github_url: https://github.com/ShreyaBatra6/it-ticket-triage-lora   # linked from the model cards
+
+# ---------------------------------------------------------------------------
+# Labels. Order matters (it is used for confusion-matrix axes and the prompt).
+# The description of each label is shown to the model in the system prompt and
+# copied into the model card, so edit it here and nowhere else.
+# ---------------------------------------------------------------------------
+labels:
+  # Kept short on purpose: the whole prompt + ticket + answer must fit in training.max_length.
+  categories:
+    Hardware: "laptops, desktops, monitors, docks, peripherals, phones (not printers)"
+    Software: "applications and the OS: crashes, errors, installs, updates, licenses"
+    Network: "Wi-Fi, LAN, VPN, internet, DNS, slow or dropping connections"
+    Access/Accounts: "logins, passwords, MFA, lockouts, permissions, access requests"
+    Email: "mailboxes, Outlook, sending/receiving mail, calendars, distribution lists"
+    Security: "phishing, malware, suspicious activity, lost/stolen devices, data exposure"
+    Printer: "printers, scanners, copiers: jams, queues, drivers, print quality"
+    Other: "general or non-IT requests: facilities, furniture, questions, onboarding logistics"
+  priorities:
+    Low: "minor issue or request, workaround exists, no deadline"
+    Medium: "work is slowed but can continue; fix within days"
+    High: "a person or team is blocked, or a deadline is at risk; fix today"
+    Critical: "company-wide outage, active security incident, or executive/customer impact; fix now"
+
+# ---------------------------------------------------------------------------
+# Models
+# ---------------------------------------------------------------------------
+model:
+  base_model_id: ibm-granite/granite-3.3-2b-instruct
+  license: apache-2.0          # license of the base model (copied into the model card)
+
+# ---------------------------------------------------------------------------
+# Data
+# ---------------------------------------------------------------------------
+data:
+  n_examples: 4000             # synthetic tickets generated before dedupe
+  val_fraction: 0.1
+  test_fraction: 0.1
+  # template_holdout: val/test use problem templates never seen in train (tests generalisation).
+  #                   Chosen because with a random split TF-IDF memorises the templates (100% category).
+  # random:           stratified random split (test shares problem templates with train)
+  split_mode: template_holdout
+  priority_label_noise: 0.03   # share of tickets whose priority is moved one level (annotators disagree)
+  near_dup_threshold: 0.8      # MinHash Jaccard; val/test items this similar to train are dropped
+  minhash_num_perm: 128
+  shingle_size: 3              # word n-grams used for MinHash
+  llm_model: claude-opus-5-5   # only used by `data_prep.py --llm N`
+  llm_batch_size: 10           # tickets requested per API call
+
+# ---------------------------------------------------------------------------
+# Paths (relative to the repo root)
+# ---------------------------------------------------------------------------
+paths:
+  data_dir: data/processed
+  output_dir: outputs
+  results_dir: results
+
+# ---------------------------------------------------------------------------
+# Hugging Face Hub repos. `{user}` and `{model_short}` are filled in by config.py
+# (model_short = last part of the model id, lower-cased).
+# ---------------------------------------------------------------------------
+hub:
+  dataset_repo: "{user}/it-ticket-triage"
+  adapter_repo: "{user}/{model_short}-it-ticket-triage-lora"
+  merged_repo: "{user}/{model_short}-it-ticket-triage"
+  space_repo: "{user}/it-ticket-triage-demo"
+  private: false
+
+# ---------------------------------------------------------------------------
+# Prompting / generation (shared by baseline eval, fine-tuned eval and the app)
+# ---------------------------------------------------------------------------
+prompt:
+  few_shot_k: 3
+  max_new_tokens: 48           # target JSON is ~13 tokens; headroom so base models aren't cut off mid-answer
+  max_body_chars: 900          # longer ticket bodies are cut (same rule in training and inference)
+
+# ---------------------------------------------------------------------------
+# QLoRA
+# ---------------------------------------------------------------------------
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+
+training:
+  load_in_4bit: true           # nf4 + double quant; ignored automatically when CUDA is unavailable
+  num_train_epochs: 2
+  max_steps: -1                # -1 = use epochs
+  learning_rate: 2.0e-4
+  lr_scheduler_type: cosine
+  warmup_ratio: 0.05
+  weight_decay: 0.0
+  per_device_train_batch_size: 8
+  gradient_accumulation_steps: 2   # effective batch size 16
+  per_device_eval_batch_size: 8
+  max_length: 512
+  gradient_checkpointing: true
+  logging_steps: 10
+  eval_steps: 50
+  save_total_limit: 2
+
+# ---------------------------------------------------------------------------
+# Evaluation
+# ---------------------------------------------------------------------------
+eval:
+  batch_size: 8
+  n_sample_errors: 10
+  # results/<run_name>.json files that become rows of the before/after table.
+  report_rows:
+    - {run_name: tfidf_lr,        label: "TF-IDF + LogReg"}
+    - {run_name: base_zero_shot,  label: "Base zero-shot"}
+    - {run_name: base_few_shot,   label: "Base few-shot (k=3)"}
+    - {run_name: lora_finetuned,  label: "LoRA fine-tuned"}
+
+# ---------------------------------------------------------------------------
+# Smoke test: tiny model, 50 examples, 10 steps, CPU-friendly.
+# Deep-merged over everything above when a script gets `--smoke`.
+# ---------------------------------------------------------------------------
+smoke:
+  model:
+    base_model_id: HuggingFaceTB/SmolLM2-135M-Instruct
+  data:
+    n_examples: 50
+  paths:
+    data_dir: data/smoke
+    output_dir: outputs/smoke
+    results_dir: results/smoke
+  training:
+    load_in_4bit: false
+    max_steps: 10
+    per_device_train_batch_size: 2
+    gradient_accumulation_steps: 1
+    per_device_eval_batch_size: 2
+    logging_steps: 2
+    eval_steps: 5
+  eval:
+    batch_size: 4
