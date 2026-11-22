@@ -80,7 +80,7 @@ def model_source(cfg: Config) -> tuple[str, str | None]:
         return cfg.model.base_model_id, str(adapter) if (adapter / "adapter_config.json").exists() else None
     return cfg.model.base_model_id, os.environ.get("ADAPTER_ID", cfg.hub.adapter_repo)
 
-
+# gradio web page
 def build_ui(triage: Triage, cfg: Config) -> gr.Blocks:
     categories = ", ".join(cfg.labels.category_names)
     with gr.Blocks(title="IT Ticket Triage") as demo:
