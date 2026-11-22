@@ -189,8 +189,8 @@ def main() -> None:
     n_converted = keep_adapter_weights_fp32(trainer.model)
     if n_converted:
         print(f"Kept {n_converted} LoRA tensors in fp32 for fp16 mixed precision (no native bf16 on this GPU).")
-    trainable = sum(p.numel() for p in trainer.model.parameters() if p.requires_grad)
-    total = sum(p.numel() for p in trainer.model.parameters())
+    # peft's counter un-packs 4-bit weights (stored 2 per byte); a plain numel() sum would halve the total.
+    trainable, total = trainer.model.get_nb_trainable_parameters()
     print(f"Trainable parameters: {trainable:,} / {total:,} ({100 * trainable / total:.2f}%)")
 
     start = time.perf_counter()
