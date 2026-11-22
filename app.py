@@ -53,6 +53,9 @@ class Triage:
         # Fold the adapter into the weights once: same predictions, faster generation.
         self.model = model.merge_and_unload() if adapter else model
 
+
+    # categorize
+
     def __call__(self, subject: str, body: str) -> tuple[dict[str, Any], str, str]:
         if not (subject or "").strip() and not (body or "").strip():
             return {"error": "Enter a subject and/or body."}, "", ""
@@ -67,7 +70,7 @@ class Triage:
         reason = parsed.error or "label outside the allowed set"
         return {"error": f"Model output rejected: {reason}"}, raw, f"Invalid output · {ms:.0f} ms"
 
-
+# model selection 
 def model_source(cfg: Config) -> tuple[str, str | None]:
     """(model id, adapter id or None) from env vars, falling back to config.yaml."""
     if os.environ.get("MODEL_ID"):
