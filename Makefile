@@ -12,10 +12,10 @@ endif
 
 ADAPTER ?= outputs/lora-adapter
 
-.PHONY: help install install-cpu check data data-push baseline train eval publish-dry eval-merged publish readme smoke
+.PHONY: help install install-cpu check data data-push baseline train eval publish-dry eval-merged publish publish-space readme demo smoke
 
 help:
-	@echo "Targets: install install-cpu check data data-push baseline train eval publish-dry eval-merged publish readme smoke"
+	@echo "Targets: install install-cpu check data data-push baseline train eval publish-dry eval-merged publish publish-space readme demo smoke"
 
 ## Install pinned deps (Colab/Kaggle: torch is already installed with CUDA).
 install:
@@ -45,7 +45,7 @@ baseline:
 	$(PYTHON) eval.py --mode zero-shot --display-name "Base zero-shot"
 	$(PYTHON) eval.py --mode few-shot --display-name "Base few-shot (k=3)"
 
-## QLoRA fine-tuning (CUDA GPU). Logs: tensorboard --logdir outputs/tensorboard
+## QLoRA fine-tuning (CUDA GPU, ~45 min on a T4). Logs: tensorboard --logdir outputs/tensorboard
 train:
 	$(PYTHON) train_lora.py
 
@@ -53,22 +53,30 @@ train:
 eval:
 	$(PYTHON) eval.py --adapter $(ADAPTER) --display-name "LoRA fine-tuned"
 
-## Build model cards, merged model and Space locally (outputs/hub/), push nothing. Review before publishing.
+## Build model cards and the merged model locally (outputs/hub/), push nothing. Review before publishing.
 publish-dry:
-	$(PYTHON) merge_and_publish.py --dry-run --merge --space
+	$(PYTHON) merge_and_publish.py --dry-run --merge
 
 ## Optional: score the merged bf16 weights directly (after publish-dry); the merged card then shows them.
 eval-merged:
 	$(PYTHON) eval.py --model outputs/hub/merged --run-name lora_merged --display-name "Merged model (bf16 weights)"
 
-## Push the adapter, the merged model (with generated model cards) and the demo Space.
-## Needs HF_TOKEN or `hf auth login`. Drop --space to skip the demo.
+## Push the adapter and the merged model, each with its generated model card.
+## Needs HF_TOKEN or `hf auth login`.
 publish:
+	$(PYTHON) merge_and_publish.py --merge
+
+## Optional: also deploy the Gradio demo as a Hugging Face Space (Gradio Spaces need a PRO account).
+publish-space:
 	$(PYTHON) merge_and_publish.py --merge --space
 
 ## Refresh the results table in README.md from results/*.json.
 readme:
 	$(PYTHON) merge_and_publish.py --readme
+
+## Gradio demo at http://127.0.0.1:7860 (published adapter by default; MODEL_ID=... for a full model).
+demo:
+	$(PYTHON) app.py
 
 ## End-to-end CPU smoke test: tiny model, 50 examples, 10 steps, no Hub push.
 smoke:

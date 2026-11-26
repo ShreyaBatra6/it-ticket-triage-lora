@@ -1,6 +1,7 @@
 """Gradio demo: paste an IT ticket, get {"category": ..., "priority": ...} back.
 
-Runs locally or as a Hugging Face Space (see space/README.md). Model selection, in order:
+Runs locally, in Colab (``--share`` prints a temporary public link) or as a Hugging Face Space
+(see space/README.md; Gradio Spaces need a PRO account). Model selection, in order:
 
 * ``MODEL_ID`` env var: a full model (e.g. the merged repo), loaded directly;
 * otherwise the base model from config.yaml + ``ADAPTER_ID`` (default: the published adapter repo),
@@ -11,6 +12,7 @@ The prompt and the strict JSON parsing are the same code used for evaluation.
 Usage::
 
     python app.py            # launch the UI (http://127.0.0.1:7860)
+    python app.py --share    # also create a public *.gradio.live link (e.g. from Colab)
     python app.py --smoke    # tiny model + local smoke adapter: build the UI, run one ticket, exit
 """
 
@@ -108,6 +110,7 @@ def build_ui(triage: Triage, cfg: Config) -> gr.Blocks:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--smoke", action="store_true", help="Tiny model: build the UI, triage one example, exit.")
+    parser.add_argument("--share", action="store_true", help="Also create a temporary public link (e.g. from Colab).")
     args = parser.parse_args()
     cfg = load_config(smoke=args.smoke)
 
@@ -120,7 +123,7 @@ def main() -> None:
         prediction, raw, status = triage(*EXAMPLES[0])
         print(f"UI built OK. Example -> {prediction} | raw: {raw!r} | {status}")
         return
-    demo.queue().launch(server_name=os.environ.get("GRADIO_SERVER_NAME", "127.0.0.1"))
+    demo.queue().launch(server_name=os.environ.get("GRADIO_SERVER_NAME", "127.0.0.1"), share=args.share)
 
 
 if __name__ == "__main__":

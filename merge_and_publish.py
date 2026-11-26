@@ -7,16 +7,18 @@
 3. ``--merge``: merge the adapter into the base weights (``merge_and_unload``, bf16, on CPU), save
    it to ``outputs/hub/merged`` with its own card, and push it to ``<user>/<model-short>-it-ticket-triage``.
 
-4. ``--space``: stage app.py + its modules + space/README.md + space/requirements.txt in
-   ``outputs/hub/space`` and push them as a Gradio Space (after the model repos exist).
+4. ``--space`` (optional): stage app.py + its modules + space/README.md + space/requirements.txt in
+   ``outputs/hub/space`` and push them as a Gradio Space (after the model repos exist). Hugging Face
+   only hosts Gradio Spaces for PRO accounts; without one the Space push fails with 402.
 5. ``--readme``: refresh the results block of the GitHub README.md from ``results/*.json``.
 
 ``--dry-run`` does everything locally (cards, staging folders, merged weights) and pushes nothing.
 
 Usage::
 
-    python merge_and_publish.py --dry-run --merge --space   # inspect outputs/hub/*/README.md first
-    python merge_and_publish.py --merge --space             # push adapter, merged model and demo Space
+    python merge_and_publish.py --dry-run --merge           # inspect outputs/hub/*/README.md first
+    python merge_and_publish.py --merge                     # push adapter and merged model
+    python merge_and_publish.py --merge --space             # ... and the demo Space (PRO account)
     python merge_and_publish.py --readme                    # only refresh README.md results
     python merge_and_publish.py --smoke --dry-run --merge --space --readme
 """
@@ -396,7 +398,7 @@ def main() -> None:
     parser.add_argument("--smoke", action="store_true", help="Use smoke-test outputs (tiny model).")
     parser.add_argument("--dry-run", action="store_true", help="Build everything locally; push nothing.")
     parser.add_argument("--merge", action="store_true", help="Also merge the adapter and publish the full model.")
-    parser.add_argument("--space", action="store_true", help="Also deploy the Gradio demo as a Space.")
+    parser.add_argument("--space", action="store_true", help="Also deploy the Gradio demo as a Space (needs a PRO account).")
     parser.add_argument("--readme", action="store_true",
                         help="Refresh the results block of README.md (alone: no model work, no Hub access).")
     args = parser.parse_args()
