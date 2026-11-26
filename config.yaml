@@ -90,8 +90,8 @@ lora:
 
 training:
   load_in_4bit: true           # nf4 + double quant; ignored automatically when CUDA is unavailable
-  num_train_epochs: 2
-  max_steps: -1                # -1 = use epochs
+  num_train_epochs: 1
+  max_steps: 200               # ~1 epoch (3,218 tickets / 16 per step), the published model; -1 = use num_train_epochs
   learning_rate: 2.0e-4
   lr_scheduler_type: cosine
   warmup_ratio: 0.05
