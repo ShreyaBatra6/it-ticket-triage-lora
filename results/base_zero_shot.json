@@ -1,0 +1,239 @@
+{
+  "run_name": "base_zero_shot",
+  "timestamp": "2026-11-26T11:47:31+00:00",
+  "smoke": false,
+  "display_name": "Base zero-shot",
+  "split": "test",
+  "model": {
+    "model_id": "ibm-granite/granite-3.3-2b-instruct",
+    "adapter": null,
+    "load_in_4bit": false,
+    "dtype": "float16"
+  },
+  "prompting": {
+    "mode": "zero-shot",
+    "k": 0,
+    "few_shot_ids": [],
+    "decoding": "greedy",
+    "max_new_tokens": 48,
+    "example_prompt": "<|start_of_role|>system<|end_of_role|>You triage IT helpdesk tickets. Assign exactly one category and one priority.\n\nCategories:\n- Hardware: laptops, desktops, monitors, docks, peripherals, phones (not printers)\n- Software: applications and the OS: crashes, errors, installs, updates, licenses\n- Network: Wi-Fi, LAN, VPN, internet, DNS, slow or dropping connections\n- Access/Accounts: logins, passwords, MFA, lockouts, permissions, access requests\n- Email: mailboxes, Outlook, sending/receiving mail, calendars, distribution lists\n- Security: phishing, malware, suspicious activity, lost/stolen devices, data exposure\n- Printer: printers, scanners, copiers: jams, queues, drivers, print quality\n- Other: general or non-IT requests: facilities, furniture, questions, onboarding logistics\n\nPriorities:\n- Low: minor issue or request, workaround exists, no deadline\n- Medium: work is slowed but can continue; fix within days\n- High: a person or team is blocked, or a deadline is at risk; fix today\n- Critical: company-wide outage, active security incident, or executive/customer impact; fix now\n\nReply with JSON only: {\"category\": \"<category>\", \"priority\": \"<priority>\"}<|end_of_text|>\n<|start_of_role|>user<|end_of_role|>Subject: Computer running slow\n\nDear Service Desk,\n\nSomething is using 100% CPU and my laptop is basically unusable. I've restarted it a few times. Nobody else has mentioned it.\n\nMany thanks,\nCarlos<|end_of_text|>\n<|start_of_role|>assistant<|end_of_role|>"
+  },
+  "metrics": {
+    "n": 404,
+    "category_accuracy": 0.8292079207920792,
+    "category_macro_f1": 0.8515584620048815,
+    "priority_accuracy": 0.5767326732673267,
+    "priority_macro_f1": 0.564190940343636,
+    "exact_match": 0.5024752475247525,
+    "valid_json_rate": 0.9975247524752475,
+    "valid_label_rate": 0.9777227722772277,
+    "per_class_f1": {
+      "category": {
+        "Hardware": 0.7478260869565218,
+        "Software": 0.7727272727272727,
+        "Network": 1.0,
+        "Access/Accounts": 0.8313253012048193,
+        "Email": 0.9459459459459459,
+        "Security": 0.5679012345679012,
+        "Printer": 0.9824561403508771,
+        "Other": 0.9642857142857143
+      },
+      "priority": {
+        "Low": 0.43243243243243246,
+        "Medium": 0.567741935483871,
+        "High": 0.6595744680851063,
+        "Critical": 0.5970149253731343
+      }
+    },
+    "lenient": {
+      "category_accuracy": 0.8316831683168316,
+      "priority_accuracy": 0.5767326732673267,
+      "exact_match": 0.5024752475247525,
+      "valid_json_rate": 1.0
+    },
+    "avg_latency_ms": 228.50016011633758,
+    "total_generation_s": 92.31406468700038,
+    "batch_size": 8,
+    "device": "cuda"
+  },
+  "confusion_matrices": {
+    "category": "base_zero_shot_cm_category.png",
+    "priority": "base_zero_shot_cm_priority.png"
+  },
+  "sample_errors": [
+    {
+      "id": "tkt-03143",
+      "subject": "Password reset needed",
+      "body": "IT,\n\nI forgot my password and I'm locked out of my machine. This is the third time I've reported this. We can't work at all. Nobody else has mentioned it. Whenever you get a chance.\n\nOmar",
+      "gold": {
+        "category": "Access/Accounts",
+        "priority": "Critical"
+      },
+      "predicted": {
+        "category": "Access/Accounts",
+        "priority": "High"
+      },
+      "raw_output": "{\"category\": \"Access/Accounts\", \"priority\": \"High\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-00456",
+      "subject": "!! new user setup",
+      "body": "can you set up accounts for kwame, a contractor starting tuesday? their line manager is kwame. i already restarted my computer. i can mannage without it for now. just me, my colleagues are fine.\n\nSent from my phone, sorry for typos",
+      "gold": {
+        "category": "Access/Accounts",
+        "priority": "Low"
+      },
+      "predicted": {
+        "category": "Access/Accounts",
+        "priority": "Medium"
+      },
+      "raw_output": "{\"category\": \"Access/Accounts\", \"priority\": \"Medium\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-00092",
+      "subject": "Work email on mobile",
+      "body": "Hiya,\n\nEmail stopped syncing on my iPhone after I changed my password. Im using the Outlook app. Nobody else has mentioned it.\n\nThanks a lot",
+      "gold": {
+        "category": "Email",
+        "priority": "Low"
+      },
+      "predicted": {
+        "category": "Email",
+        "priority": "Medium"
+      },
+      "raw_output": "{\"category\": \"Email\", \"priority\": \"Medium\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-03699",
+      "subject": "accounts for new starter carlos",
+      "body": "Hi\n\ncan you set up accounts for carlos, a contractor starting thursday? could someone look at it before thursday?\n\nSent from my iPhone",
+      "gold": {
+        "category": "Access/Accounts",
+        "priority": "High"
+      },
+      "predicted": {
+        "category": "Access/Accounts",
+        "priority": "Medium"
+      },
+      "raw_output": "{\"category\": \"Access/Accounts\", \"priority\": \"Medium\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-01418",
+      "subject": "Password problem",
+      "body": "Respected IT team,\n\nI forgot my password and I'm locked out of my laptop. Could someone look at it before Tuesday?\n\nPlease revert at the earliest.",
+      "gold": {
+        "category": "Access/Accounts",
+        "priority": "Medium"
+      },
+      "predicted": {
+        "category": "Access/Accounts",
+        "priority": "High"
+      },
+      "raw_output": "{\"category\": \"Access/Accounts\", \"priority\": \"High\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-01277",
+      "subject": "Onboarding schedule",
+      "body": "Hi\n\nWhat time should Lucas arrive on their first day and who will meet them? It's slowing me down quite a bit.\n\nSent from Outlook for Android",
+      "gold": {
+        "category": "Other",
+        "priority": "Medium"
+      },
+      "predicted": {
+        "category": "Other",
+        "priority": "Low"
+      },
+      "raw_output": "{\"category\": \"Other\", \"priority\": \"Low\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-01126",
+      "subject": "Battery not holding charge",
+      "body": "Dear Service Desk,\n\nThe trackpad is lifting up, I think the battery might be swollen. Battery health in settings says 'Service recommended'. I can manage without it for now.\n\nBest regards,\nElena (Operations)",
+      "gold": {
+        "category": "Hardware",
+        "priority": "Low"
+      },
+      "predicted": {
+        "category": "Hardware",
+        "priority": "Medium"
+      },
+      "raw_output": "{\"category\": \"Hardware\", \"priority\": \"Medium\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-00635",
+      "subject": "Fwd: MFA not working",
+      "body": "Hi,\n\nThe MFA prompt never arrives on my phone. I've been waiting two days for a reply already. This is my first week so sorry if it's a silly question. Please could it be fixed today? I'm completely stuck.\n\nAisha",
+      "gold": {
+        "category": "Access/Accounts",
+        "priority": "High"
+      },
+      "predicted": {
+        "category": "Security",
+        "priority": "High"
+      },
+      "raw_output": "{\"category\": \"Security\", \"priority\": \"High\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-03677",
+      "subject": "Site network down",
+      "body": "Dear IT Support,\n\nThe Dublin warehouse lost its network connection and the handheld scanners can't sync. I can't do my job until this is fixed. Please call me ASAP on 07700 900123.\n\nMany thanks,\nPriya",
+      "gold": {
+        "category": "Network",
+        "priority": "High"
+      },
+      "predicted": {
+        "category": "Network",
+        "priority": "Critical"
+      },
+      "raw_output": "{\"category\": \"Network\", \"priority\": \"Critical\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-00441",
+      "subject": "RE: Request",
+      "body": "Respected IT team,\n\nCan you set up accounts for Daniel, a contractor starting Monday? Their line manager is Daniel.\n\nThey need the standard Marketing access. My manager asked me to raise a ticket. Just me, my colleagues are fine.\n\nKindly do the needful.",
+      "gold": {
+        "category": "Access/Accounts",
+        "priority": "Low"
+      },
+      "predicted": {
+        "category": "Access/Accounts",
+        "priority": "Medium"
+      },
+      "raw_output": "{\"category\": \"Access/Accounts\", \"priority\": \"Medium\"}",
+      "parse_error": null
+    }
+  ],
+  "environment": {
+    "python": "3.13.16",
+    "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+    "processor": "x86_64",
+    "cpu_count": 2,
+    "libraries": {
+      "torch": "2.14.1+cu130",
+      "transformers": "5.23.0",
+      "peft": "0.22.0",
+      "trl": "1.18.2",
+      "accelerate": "1.16.0",
+      "datasets": "5.2.0",
+      "bitsandbytes": "0.50.2",
+      "huggingface_hub": "2.4.0",
+      "scikit-learn": "1.9.1",
+      "numpy": "2.4.6"
+    },
+    "gpu": {
+      "name": "Tesla T4",
+      "count": 1,
+      "memory_gb": 14.6,
+      "cuda": "13.0"
+    }
+  }
+}

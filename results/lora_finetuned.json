@@ -1,0 +1,239 @@
+{
+  "run_name": "lora_finetuned",
+  "timestamp": "2026-11-26T12:42:56+00:00",
+  "smoke": false,
+  "display_name": "LoRA fine-tuned",
+  "split": "test",
+  "model": {
+    "model_id": "ibm-granite/granite-3.3-2b-instruct",
+    "adapter": "outputs/lora-adapter",
+    "load_in_4bit": false,
+    "dtype": "float16"
+  },
+  "prompting": {
+    "mode": "zero-shot",
+    "k": 0,
+    "few_shot_ids": [],
+    "decoding": "greedy",
+    "max_new_tokens": 48,
+    "example_prompt": "<|start_of_role|>system<|end_of_role|>You triage IT helpdesk tickets. Assign exactly one category and one priority.\n\nCategories:\n- Hardware: laptops, desktops, monitors, docks, peripherals, phones (not printers)\n- Software: applications and the OS: crashes, errors, installs, updates, licenses\n- Network: Wi-Fi, LAN, VPN, internet, DNS, slow or dropping connections\n- Access/Accounts: logins, passwords, MFA, lockouts, permissions, access requests\n- Email: mailboxes, Outlook, sending/receiving mail, calendars, distribution lists\n- Security: phishing, malware, suspicious activity, lost/stolen devices, data exposure\n- Printer: printers, scanners, copiers: jams, queues, drivers, print quality\n- Other: general or non-IT requests: facilities, furniture, questions, onboarding logistics\n\nPriorities:\n- Low: minor issue or request, workaround exists, no deadline\n- Medium: work is slowed but can continue; fix within days\n- High: a person or team is blocked, or a deadline is at risk; fix today\n- Critical: company-wide outage, active security incident, or executive/customer impact; fix now\n\nReply with JSON only: {\"category\": \"<category>\", \"priority\": \"<priority>\"}<|end_of_text|>\n<|start_of_role|>user<|end_of_role|>Subject: Computer running slow\n\nDear Service Desk,\n\nSomething is using 100% CPU and my laptop is basically unusable. I've restarted it a few times. Nobody else has mentioned it.\n\nMany thanks,\nCarlos<|end_of_text|>\n<|start_of_role|>assistant<|end_of_role|>"
+  },
+  "metrics": {
+    "n": 404,
+    "category_accuracy": 0.9975247524752475,
+    "category_macro_f1": 0.9977152477152477,
+    "priority_accuracy": 0.7326732673267327,
+    "priority_macro_f1": 0.7238491156343231,
+    "exact_match": 0.7301980198019802,
+    "valid_json_rate": 1.0,
+    "valid_label_rate": 1.0,
+    "per_class_f1": {
+      "category": {
+        "Hardware": 1.0,
+        "Software": 1.0,
+        "Network": 1.0,
+        "Access/Accounts": 0.9947089947089947,
+        "Email": 0.987012987012987,
+        "Security": 1.0,
+        "Printer": 1.0,
+        "Other": 1.0
+      },
+      "priority": {
+        "Low": 0.6075949367088608,
+        "Medium": 0.7542857142857143,
+        "High": 0.7802690582959642,
+        "Critical": 0.7532467532467533
+      }
+    },
+    "lenient": {
+      "category_accuracy": 0.9975247524752475,
+      "priority_accuracy": 0.7326732673267327,
+      "exact_match": 0.7301980198019802,
+      "valid_json_rate": 1.0
+    },
+    "avg_latency_ms": 397.79347239603715,
+    "total_generation_s": 160.70856284799902,
+    "batch_size": 8,
+    "device": "cuda"
+  },
+  "confusion_matrices": {
+    "category": "lora_finetuned_cm_category.png",
+    "priority": "lora_finetuned_cm_priority.png"
+  },
+  "sample_errors": [
+    {
+      "id": "tkt-02954",
+      "subject": "Accounts for new starter Rahul",
+      "body": "Hello team,\n\nCan you set up accounts for Rahul, a contractor starting Thursday? Sometime this week would be great.\n\nPlease revert at the earliest.",
+      "gold": {
+        "category": "Access/Accounts",
+        "priority": "Low"
+      },
+      "predicted": {
+        "category": "Access/Accounts",
+        "priority": "Medium"
+      },
+      "raw_output": "{\"category\": \"Access/Accounts\", \"priority\": \"Medium\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-00408",
+      "subject": "Hard drive problem?",
+      "body": "My laptop says the disk is failing and to back up my files.",
+      "gold": {
+        "category": "Hardware",
+        "priority": "High"
+      },
+      "predicted": {
+        "category": "Hardware",
+        "priority": "Medium"
+      },
+      "raw_output": "{\"category\": \"Hardware\", \"priority\": \"Medium\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-00092",
+      "subject": "Work email on mobile",
+      "body": "Hiya,\n\nEmail stopped syncing on my iPhone after I changed my password. Im using the Outlook app. Nobody else has mentioned it.\n\nThanks a lot",
+      "gold": {
+        "category": "Email",
+        "priority": "Low"
+      },
+      "predicted": {
+        "category": "Email",
+        "priority": "Medium"
+      },
+      "raw_output": "{\"category\": \"Email\", \"priority\": \"Medium\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-03560",
+      "subject": "High priority: problem",
+      "body": "Hiya,\n\nzoom cannot find my microphone even though it works in other apps. its not stopping me from working.\n\ncheers, Priya",
+      "gold": {
+        "category": "Software",
+        "priority": "Medium"
+      },
+      "predicted": {
+        "category": "Software",
+        "priority": "Low"
+      },
+      "raw_output": "{\"category\": \"Software\", \"priority\": \"Low\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-01458",
+      "subject": "accounts for new starter arjun",
+      "body": "Can you set up accounts for Arjun, a contractor starting Friday? Only me so far.",
+      "gold": {
+        "category": "Access/Accounts",
+        "priority": "High"
+      },
+      "predicted": {
+        "category": "Access/Accounts",
+        "priority": "Medium"
+      },
+      "raw_output": "{\"category\": \"Access/Accounts\", \"priority\": \"Medium\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-01335",
+      "subject": "Fwd: Battery not holding charge",
+      "body": "The trackpad is lifting up, I think the battery might be swollen. The notebook is about three years old.\n\nBattery health in settings says 'Service recommended'. It's only affecting me as far as I know. PS: could someone install Notepad++ for me when you have time?\n\nthanks!",
+      "gold": {
+        "category": "Hardware",
+        "priority": "Low"
+      },
+      "predicted": {
+        "category": "Hardware",
+        "priority": "Medium"
+      },
+      "raw_output": "{\"category\": \"Hardware\", \"priority\": \"Medium\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-00978",
+      "subject": "URGENT - No connection at my desk",
+      "body": "Morning all,\n\nthe network port at my new desk doesnt work, the light by the cable never comes on. no rush.\n\nthx",
+      "gold": {
+        "category": "Network",
+        "priority": "Low"
+      },
+      "predicted": {
+        "category": "Network",
+        "priority": "High"
+      },
+      "raw_output": "{\"category\": \"Network\", \"priority\": \"High\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-00653",
+      "subject": "Accounts for new starter Grace",
+      "body": "Hi,\n\nCan you set up accounts for Grace, a contractor starting Tuesday? Please actually fix it this time. It's more of a request than a problem. Only me so far. Sometime this week would be great.\n\nThanks.",
+      "gold": {
+        "category": "Access/Accounts",
+        "priority": "Low"
+      },
+      "predicted": {
+        "category": "Access/Accounts",
+        "priority": "Medium"
+      },
+      "raw_output": "{\"category\": \"Access/Accounts\", \"priority\": \"Medium\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-00335",
+      "subject": "New user setup",
+      "body": "IT,\n\nCan you set up accounts for Kwame, a contractor starting Friday? This is the third time I've reported this.\n\nThanks.",
+      "gold": {
+        "category": "Access/Accounts",
+        "priority": "Low"
+      },
+      "predicted": {
+        "category": "Access/Accounts",
+        "priority": "Medium"
+      },
+      "raw_output": "{\"category\": \"Access/Accounts\", \"priority\": \"Medium\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-03143",
+      "subject": "Password reset needed",
+      "body": "IT,\n\nI forgot my password and I'm locked out of my machine. This is the third time I've reported this. We can't work at all. Nobody else has mentioned it. Whenever you get a chance.\n\nOmar",
+      "gold": {
+        "category": "Access/Accounts",
+        "priority": "Critical"
+      },
+      "predicted": {
+        "category": "Access/Accounts",
+        "priority": "High"
+      },
+      "raw_output": "{\"category\": \"Access/Accounts\", \"priority\": \"High\"}",
+      "parse_error": null
+    }
+  ],
+  "environment": {
+    "python": "3.13.16",
+    "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+    "processor": "x86_64",
+    "cpu_count": 2,
+    "libraries": {
+      "torch": "2.14.1+cu130",
+      "transformers": "5.23.0",
+      "peft": "0.22.0",
+      "trl": "1.18.2",
+      "accelerate": "1.16.0",
+      "datasets": "5.2.0",
+      "bitsandbytes": "0.50.2",
+      "huggingface_hub": "2.4.0",
+      "scikit-learn": "1.9.1",
+      "numpy": "2.4.6"
+    },
+    "gpu": {
+      "name": "Tesla T4",
+      "count": 1,
+      "memory_gb": 14.6,
+      "cuda": "13.0"
+    }
+  }
+}

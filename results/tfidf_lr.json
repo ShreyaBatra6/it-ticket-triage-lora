@@ -1,6 +1,6 @@
 {
   "run_name": "tfidf_lr",
-  "timestamp": "2026-11-21T21:27:23+00:00",
+  "timestamp": "2026-11-26T11:45:39+00:00",
   "smoke": false,
   "display_name": "TF-IDF + LogReg",
   "split": "test",
@@ -23,7 +23,7 @@
         "1.0": 0.7156267663706262,
         "3.0": 0.7068294225902921,
         "10.0": 0.6873947449292709,
-        "30.0": 0.6876885614750986
+        "30.0": 0.6873378712537083
       }
     }
   },
@@ -60,7 +60,7 @@
       "exact_match": 0.6782178217821783,
       "valid_json_rate": 1.0
     },
-    "avg_latency_ms": 0.5347688119319074,
+    "avg_latency_ms": 0.7845166361386811,
     "batch_size": 404,
     "device": "cpu"
   },
@@ -221,22 +221,27 @@
     }
   ],
   "environment": {
-    "python": "3.11.17",
-    "platform": "Windows-10-10.0.26300-SP0",
-    "processor": "Intel64 Family 6 Model 140 Stepping 1, GenuineIntel",
-    "cpu_count": 8,
+    "python": "3.13.16",
+    "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+    "processor": "x86_64",
+    "cpu_count": 2,
     "libraries": {
-      "torch": "2.15.0+cpu",
+      "torch": "2.14.1+cu130",
       "transformers": "5.23.0",
       "peft": "0.22.0",
       "trl": "1.18.2",
       "accelerate": "1.16.0",
       "datasets": "5.2.0",
-      "bitsandbytes": null,
+      "bitsandbytes": "0.50.2",
       "huggingface_hub": "2.4.0",
       "scikit-learn": "1.9.1",
       "numpy": "2.4.6"
     },
-    "gpu": null
+    "gpu": {
+      "name": "Tesla T4",
+      "count": 1,
+      "memory_gb": 14.6,
+      "cuda": "13.0"
+    }
   }
 }

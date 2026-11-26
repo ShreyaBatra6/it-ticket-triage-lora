@@ -1,0 +1,243 @@
+{
+  "run_name": "base_few_shot",
+  "timestamp": "2026-11-26T11:49:54+00:00",
+  "smoke": false,
+  "display_name": "Base few-shot (k=3)",
+  "split": "test",
+  "model": {
+    "model_id": "ibm-granite/granite-3.3-2b-instruct",
+    "adapter": null,
+    "load_in_4bit": false,
+    "dtype": "float16"
+  },
+  "prompting": {
+    "mode": "few-shot",
+    "k": 3,
+    "few_shot_ids": [
+      "tkt-00446",
+      "tkt-00762",
+      "tkt-01540"
+    ],
+    "decoding": "greedy",
+    "max_new_tokens": 48,
+    "example_prompt": "<|start_of_role|>system<|end_of_role|>You triage IT helpdesk tickets. Assign exactly one category and one priority.\n\nCategories:\n- Hardware: laptops, desktops, monitors, docks, peripherals, phones (not printers)\n- Software: applications and the OS: crashes, errors, installs, updates, licenses\n- Network: Wi-Fi, LAN, VPN, internet, DNS, slow or dropping connections\n- Access/Accounts: logins, passwords, MFA, lockouts, permissions, access requests\n- Email: mailboxes, Outlook, sending/receiving mail, calendars, distribution lists\n- Security: phishing, malware, suspicious activity, lost/stolen devices, data exposure\n- Printer: printers, scanners, copiers: jams, queues, drivers, print quality\n- Other: general or non-IT requests: facilities, furniture, questions, onboarding logistics\n\nPriorities:\n- Low: minor issue or request, workaround exists, no deadline\n- Medium: work is slowed but can continue; fix within days\n- High: a person or team is blocked, or a deadline is at risk; fix today\n- Critical: company-wide outage, active security incident, or executive/customer impact; fix now\n\nReply with JSON only: {\"category\": \"<category>\", \"priority\": \"<priority>\"}<|end_of_text|>\n<|start_of_role|>user<|end_of_role|>Subject: Access to Jira\n\nI need an account for Jira, my manager has approved it.<|end_of_text|>\n<|start_of_role|>assistant<|end_of_role|>{\"category\": \"Access/Accounts\", \"priority\": \"Medium\"}<|end_of_text|>\n<|start_of_role|>user<|end_of_role|>Subject: !! Visual Studio Code says unlicensed\n\nRespected IT team,\n\nVisual Studio Code shows 'Unlicensed Product' across the top. I signed out and back in. It worked fine last week.\n\nTicket number from last time was INC08482. I'm losing time every day because of this. Only me so far. We have a deadline at 11:30 today.\n\nThanks and regards,\nOlga<|end_of_text|>\n<|start_of_role|>assistant<|end_of_role|>{\"category\": \"Software\", \"priority\": \"High\"}<|end_of_text|>\n<|start_of_role|>user<|end_of_role|>Subject: Mail issue\n\nHi IT,\n\nthe invoices@ mailbox stopped receiving, and customers send payment confirmations there. customers cannot reach our suport line.\n\nthx<|end_of_text|>\n<|start_of_role|>assistant<|end_of_role|>{\"category\": \"Email\", \"priority\": \"Critical\"}<|end_of_text|>\n<|start_of_role|>user<|end_of_role|>Subject: Computer running slow\n\nDear Service Desk,\n\nSomething is using 100% CPU and my laptop is basically unusable. I've restarted it a few times. Nobody else has mentioned it.\n\nMany thanks,\nCarlos<|end_of_text|>\n<|start_of_role|>assistant<|end_of_role|>"
+  },
+  "metrics": {
+    "n": 404,
+    "category_accuracy": 0.8514851485148515,
+    "category_macro_f1": 0.8703793826510708,
+    "priority_accuracy": 0.5841584158415841,
+    "priority_macro_f1": 0.5591743750536992,
+    "exact_match": 0.5024752475247525,
+    "valid_json_rate": 0.9975247524752475,
+    "valid_label_rate": 0.9975247524752475,
+    "per_class_f1": {
+      "category": {
+        "Hardware": 0.7906976744186046,
+        "Software": 0.8264462809917356,
+        "Network": 0.9649122807017544,
+        "Access/Accounts": 0.8117647058823529,
+        "Email": 0.9166666666666666,
+        "Security": 0.7252747252747253,
+        "Printer": 0.9454545454545454,
+        "Other": 0.9818181818181818
+      },
+      "priority": {
+        "Low": 0.5294117647058824,
+        "Medium": 0.5821917808219178,
+        "High": 0.6474820143884892,
+        "Critical": 0.47761194029850745
+      }
+    },
+    "lenient": {
+      "category_accuracy": 0.8539603960396039,
+      "priority_accuracy": 0.5841584158415841,
+      "exact_match": 0.5024752475247525,
+      "valid_json_rate": 1.0
+    },
+    "avg_latency_ms": 311.5721131237609,
+    "total_generation_s": 125.8751337019994,
+    "batch_size": 8,
+    "device": "cuda"
+  },
+  "confusion_matrices": {
+    "category": "base_few_shot_cm_category.png",
+    "priority": "base_few_shot_cm_priority.png"
+  },
+  "sample_errors": [
+    {
+      "id": "tkt-03231",
+      "subject": "New user setup",
+      "body": "Hi,\n\nCan you set up accounts for Priya, a contractor starting Thursday? This is the third time I've reported this. Only me so far.\n\nPriya",
+      "gold": {
+        "category": "Access/Accounts",
+        "priority": "Medium"
+      },
+      "predicted": {
+        "category": "Access/Accounts",
+        "priority": "High"
+      },
+      "raw_output": "{\"category\": \"Access/Accounts\", \"priority\": \"High\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-00575",
+      "subject": "Computer running slow",
+      "body": "Hi,\n\nSomething is using 100% CPU and my laptop is basically unusable. This is the third time I've reported this. It's making everything take twice as long.",
+      "gold": {
+        "category": "Software",
+        "priority": "Medium"
+      },
+      "predicted": {
+        "category": "Hardware",
+        "priority": "High"
+      },
+      "raw_output": "{\"category\": \"Hardware\", \"priority\": \"High\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-00092",
+      "subject": "Work email on mobile",
+      "body": "Hiya,\n\nEmail stopped syncing on my iPhone after I changed my password. Im using the Outlook app. Nobody else has mentioned it.\n\nThanks a lot",
+      "gold": {
+        "category": "Email",
+        "priority": "Low"
+      },
+      "predicted": {
+        "category": "Email",
+        "priority": "Medium"
+      },
+      "raw_output": "{\"category\": \"Email\", \"priority\": \"Medium\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-03677",
+      "subject": "Site network down",
+      "body": "Dear IT Support,\n\nThe Dublin warehouse lost its network connection and the handheld scanners can't sync. I can't do my job until this is fixed. Please call me ASAP on 07700 900123.\n\nMany thanks,\nPriya",
+      "gold": {
+        "category": "Network",
+        "priority": "High"
+      },
+      "predicted": {
+        "category": "Network",
+        "priority": "Critical"
+      },
+      "raw_output": "{\"category\": \"Network\", \"priority\": \"Critical\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-01458",
+      "subject": "accounts for new starter arjun",
+      "body": "Can you set up accounts for Arjun, a contractor starting Friday? Only me so far.",
+      "gold": {
+        "category": "Access/Accounts",
+        "priority": "High"
+      },
+      "predicted": {
+        "category": "Access/Accounts",
+        "priority": "Medium"
+      },
+      "raw_output": "{\"category\": \"Access/Accounts\", \"priority\": \"Medium\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-01289",
+      "subject": "Accounts for new starter Olga",
+      "body": "can you set up acccounts for olga, a contractor starting monday? it's making everything take twice as long.",
+      "gold": {
+        "category": "Access/Accounts",
+        "priority": "Low"
+      },
+      "predicted": {
+        "category": "Access/Accounts",
+        "priority": "High"
+      },
+      "raw_output": "{\"category\": \"Access/Accounts\", \"priority\": \"High\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-01208",
+      "subject": "The invoices@ mailbox issue",
+      "body": "Hello team,\n\nThe invoices@ mailbox disappeared from my Outlook folder list. I need this sorted before my 2pm meeting. We cannot work at all.\n\nPlease revert at the earliest.",
+      "gold": {
+        "category": "Email",
+        "priority": "High"
+      },
+      "predicted": {
+        "category": "Email",
+        "priority": "Critical"
+      },
+      "raw_output": "{\"category\": \"Email\", \"priority\": \"Critical\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-00678",
+      "subject": "accounts for new starter mei",
+      "body": "Can you set up accounts for Mei, a contractor starting Friday? I can stiill work but it's frustrating.",
+      "gold": {
+        "category": "Access/Accounts",
+        "priority": "Medium"
+      },
+      "predicted": {
+        "category": "Access/Accounts",
+        "priority": "High"
+      },
+      "raw_output": "{\"category\": \"Access/Accounts\", \"priority\": \"High\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-03674",
+      "subject": "Request",
+      "body": "Dear Sir/Madam,\n\nThe MFA prompt never arrives on my phone. My old phone was wiped. It's only affecting me as far as I know. I can still work but it's frustrating.\n\nThanks and regards,\nMei",
+      "gold": {
+        "category": "Access/Accounts",
+        "priority": "Medium"
+      },
+      "predicted": {
+        "category": "Security",
+        "priority": "Medium"
+      },
+      "raw_output": "{\"category\": \"Security\", \"priority\": \"Medium\"}",
+      "parse_error": null
+    },
+    {
+      "id": "tkt-00494",
+      "subject": "Password problem",
+      "body": "I forgoot my password and I'm locked out of my notebook. I changed it on Friday. I've been waiting two days for a reply already. I'm completely stuck. Please treat this as an emergency. I'm on stage at the client conference in 30 minutes and need this. Also, could you add me to the all-staff list?\n\nPriya",
+      "gold": {
+        "category": "Access/Accounts",
+        "priority": "Critical"
+      },
+      "predicted": {
+        "category": "Access/Accounts",
+        "priority": "High"
+      },
+      "raw_output": "{\"category\": \"Access/Accounts\", \"priority\": \"High\"}",
+      "parse_error": null
+    }
+  ],
+  "environment": {
+    "python": "3.13.16",
+    "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+    "processor": "x86_64",
+    "cpu_count": 2,
+    "libraries": {
+      "torch": "2.14.1+cu130",
+      "transformers": "5.23.0",
+      "peft": "0.22.0",
+      "trl": "1.18.2",
+      "accelerate": "1.16.0",
+      "datasets": "5.2.0",
+      "bitsandbytes": "0.50.2",
+      "huggingface_hub": "2.4.0",
+      "scikit-learn": "1.9.1",
+      "numpy": "2.4.6"
+    },
+    "gpu": {
+      "name": "Tesla T4",
+      "count": 1,
+      "memory_gb": 14.6,
+      "cuda": "13.0"
+    }
+  }
+}
