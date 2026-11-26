@@ -50,6 +50,8 @@ Test split: 404 tickets whose problem templates never appear in training. Strict
 
 [`app.py`](app.py) is a small Gradio app: paste a ticket, get the JSON back.
 
+![The Gradio demo triaging a phishing ticket as Security / High](docs/demo.png)
+
 ```bash
 python app.py            # http://127.0.0.1:7860 (also runs on CPU: ~10 GB RAM, a few seconds per ticket)
 python app.py --share    # in Colab: also prints a temporary public *.gradio.live link
